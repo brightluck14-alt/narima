@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Narima Dashboard</title>
+
+<link rel="icon" href="favicon.png">
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<nav class="main-nav">
+    <div class="logo">🚀 Narima</div>
+
+    <div class="nav-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="chat.html">Chat</a>
+        <a href="checkin.html">Review</a>
+    </div>
+</nav>
+
+<div class="chat-container">
+
+    <h1>🚀 Narima Dashboard</h1>
+
+    <p class="tagline">
+        Track your growth. Build your future.
+    </p>
+
+    <div class="stats">
+
+        <div class="stat-box">
+            <h2 id="goalCount">0</h2>
+            <p>Goals</p>
+        </div>
+
+        <div class="stat-box">
+            <h2 id="avgProgress">0%</h2>
+            <p>Progress</p>
+        </div>
+
+        <div class="stat-box">
+            <h2 id="xpCount">0</h2>
+            <p>XP</p>
+        </div>
+
+        <div class="stat-box">
+            <h2 id="levelCount">1</h2>
+            <p>Level</p>
+        </div>
+
+    </div>
+
+    <br>
+
+    <a href="chat.html" class="hero-btn">
+        ➕ Create New Goal
+    </a>
+
+    <br><br>
+
+    <div id="insights"></div>
+
+    <div id="lastCheckin"></div>
+
+    <h2>🏅 Achievements</h2>
+    <div id="badges"></div>
+
+    <h2>🎯 Your Goals</h2>
+    <div id="goals-list"></div>
+
+</div>
+
+<script>
+
+let goals =
+JSON.parse(localStorage.getItem("narimaGoals")) || [];
+
+let checkins =
+JSON.parse(localStorage.getItem("narimaCheckins")) || [];
+
+/* Stats */
+
+let totalProgress = 0;
+let completedGoals = 0;
+
+goals.forEach(goal => {
+
+    totalProgress += Number(goal.progress) || 0;
+
+    if((goal.progress || 0) >= 100){
+        completedGoals++;
+    }
+
+});
+
+let averageProgress =
+goals.length
+? Math.round(totalProgress / goals.length)
+: 0;
+
+/* XP */
+
+let xp = checkins.length * 50;
+
+let level =
+Math.floor(xp / 200) + 1;
+
+/* Update Stats */
+
+document.getElementById("goalCount").textContent =
+goals.length;
+
+document.getElementById("avgProgress").textContent =
+averageProgress + "%";
+
+document.getElementById("xpCount").textContent =
+xp;
+
+document.getElementById("levelCount").textContent =
+level;
+
+/* Insights */
+
+let insight = "Create your first goal.";
+
+if(averageProgress >= 25){
+insight = "You are building momentum.";
+}
+
+if(averageProgress >= 50){
+insight = "Strong progress. Stay consistent.";
+}
+
+if(averageProgress >= 75){
+insight = "Excellent work. Keep pushing.";
+}
+
+if(averageProgress >= 100){
+insight = "Goal completed. Time for a bigger challenge.";
+}
+
+document.getElementById("insights").innerHTML = `
+<div class="card">
+<h3>🧠 Narima Insight</h3>
+<p>${insight}</p>
+</div>
+`;
+
+/* Latest Review */
+
+if(checkins.length){
+
+let latest =
+checkins[checkins.length - 1];
+
+document.getElementById("lastCheckin").innerHTML = `
+<div class="card">
+<h3>📋 Latest Review</h3>
+
+<p><strong>Achievement:</strong>
+${latest.achievement || "N/A"}
+</p>
+
+<p><strong>Hours:</strong>
+${latest.hours || 0}
+</p>
+
+<p><strong>Next Action:</strong>
+${latest.nextGoal || "N/A"}
+</p>
+
+</div>
+`;
+
+}
+
+/* Badges */
+
+let badges = "";
+
+if(goals.length >= 1){
+badges += `<div class="card">🏅 First Goal</div>`;
+}
+
+if(checkins.length >= 1){
+badges += `<div class="card">📋 First Review</div>`;
+}
+
+if(checkins.length >= 4){
+badges += `<div class="card">🔥 Consistent</div>`;
+}
+
+if(completedGoals >= 1){
+badges += `<div class="card">✅ Goal Completed</div>`;
+}
+
+document.getElementById("badges").innerHTML = badges;
+
+/* Delete Goal */
+
+function deleteGoal(index){
+
+if(confirm("Delete this goal?")){
+
+goals.splice(index,1);
+
+localStorage.setItem(
+"narimaGoals",
+JSON.stringify(goals)
+);
+
+location.reload();
+
+}
+
+}
+
+/* Goals */
+
+let output = "";
+
+if(!goals.length){
+
+output = `
+<div class="card">
+<h3>No Goals Yet</h3>
+<p>Create your first goal.</p>
+</div>
+`;
+
+}
+else{
+
+goals.forEach((goal,index)=>{
+
+let progress =
+Number(goal.progress) || 0;
+
+output += `
+
+<div class="card">
+
+<h3>${goal.goal}</h3>
+
+<p><strong>Why:</strong>
+${goal.reason || "Not provided"}
+</p>
+
+<p><strong>Target:</strong>
+${goal.deadline || "Not set"}
+</p>
+
+<p><strong>Commitment:</strong>
+${goal.commitment || "N/A"}/10
+</p>
+
+<p><strong>Progress:</strong>
+${progress}%
+</p>
+
+<div class="progress-bar">
+<div
+class="progress-fill"
+style="width:${progress}%">
+</div>
+</div>
+
+<br>
+
+<button
+onclick="location.href='checkin.html'">
+📋 Weekly Review
+</button>
+
+<button
+onclick="deleteGoal(${index})">
+🗑 Delete
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+document.getElementById("goals-list").innerHTML =
+output;
+
+</script>
+
+</body>
+</html>

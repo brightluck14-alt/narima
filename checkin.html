@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Narima Weekly Review</title>
+
+<link rel="icon" href="favicon.png">
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="chat-container">
+
+<h1>📋 Narima Weekly Review</h1>
+
+<p class="tagline">
+Reflect • Learn • Improve
+</p>
+
+<a href="dashboard.html">← Back to Dashboard</a>
+
+<br><br>
+
+<form id="checkinForm">
+
+<label>🏆 What is the biggest thing you accomplished this week?</label>
+<input type="text" id="achievement" required>
+
+<br><br>
+
+<label>📅 How many days did you actively work on your goal?</label>
+
+<select id="daysWorked">
+
+<option value="0">0 Days</option>
+<option value="1">1–2 Days</option>
+<option value="2">3–4 Days</option>
+<option value="3">5–7 Days</option>
+
+</select>
+
+<br><br>
+
+<label>⏰ How many total hours did you work?</label>
+<input type="number" id="hours" min="0" required>
+
+<br><br>
+
+<label>⚠️ What challenge slowed you down the most?</label>
+<input type="text" id="challenge" required>
+
+<br><br>
+
+<label>💡 What important lesson did you learn?</label>
+<input type="text" id="lesson" required>
+
+<br><br>
+
+<label>🎯 What is the single most important action you will take next week?</label>
+<input type="text" id="nextGoal" required>
+
+<br><br>
+
+<button
+type="button"
+onclick="submitCheckin()">
+Submit Review
+</button>
+
+</form>
+
+<br>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+function submitCheckin(){
+
+const achievement =
+document.getElementById("achievement").value.trim();
+
+const daysWorked =
+document.getElementById("daysWorked").value;
+
+const hours =
+document.getElementById("hours").value.trim();
+
+const challenge =
+document.getElementById("challenge").value.trim();
+
+const lesson =
+document.getElementById("lesson").value.trim();
+
+const nextGoal =
+document.getElementById("nextGoal").value.trim();
+
+if(
+achievement === "" ||
+hours === "" ||
+challenge === "" ||
+lesson === "" ||
+nextGoal === ""
+){
+alert("Please complete all fields.");
+return;
+}
+
+/* Progress Calculation */
+
+let progressIncrease = 0;
+
+switch(daysWorked){
+
+case "3":
+progressIncrease = 15;
+break;
+
+case "2":
+progressIncrease = 10;
+break;
+
+case "1":
+progressIncrease = 5;
+break;
+
+default:
+progressIncrease = 2;
+
+}
+
+/* Load Goals */
+
+let goals =
+JSON.parse(
+localStorage.getItem("narimaGoals")
+) || [];
+
+/* Update Goals */
+
+goals.forEach(goal => {
+
+goal.progress =
+(goal.progress || 0) + progressIncrease;
+
+if(goal.progress > 100){
+goal.progress = 100;
+}
+
+});
+
+localStorage.setItem(
+"narimaGoals",
+JSON.stringify(goals)
+);
+
+/* Calculate Average Progress */
+
+let totalProgress = 0;
+
+goals.forEach(goal => {
+totalProgress += goal.progress || 0;
+});
+
+let averageProgress =
+goals.length > 0
+? Math.round(totalProgress / goals.length)
+: 0;
+
+/* Save Review */
+
+let checkins =
+JSON.parse(
+localStorage.getItem("narimaCheckins")
+) || [];
+
+checkins.push({
+
+date:
+new Date().toLocaleDateString(),
+
+achievement:
+achievement,
+
+daysWorked:
+daysWorked,
+
+hours:
+hours,
+
+challenge:
+challenge,
+
+lesson:
+lesson,
+
+nextGoal:
+nextGoal,
+
+added:
+progressIncrease,
+
+averageProgress:
+averageProgress
+
+});
+
+localStorage.setItem(
+"narimaCheckins",
+JSON.stringify(checkins)
+);
+
+/* AI Feedback */
+
+let aiAdvice = "";
+
+if(daysWorked === "3"){
+
+aiAdvice =
+"Outstanding consistency. You are building strong momentum and discipline.";
+
+}
+else if(daysWorked === "2"){
+
+aiAdvice =
+"Good work. A more structured schedule can help increase your progress.";
+
+}
+else if(daysWorked === "1"){
+
+aiAdvice =
+"You moved forward. Focus on smaller daily actions to build consistency.";
+
+}
+else{
+
+aiAdvice =
+"Progress starts with action. Commit to one important task tomorrow.";
+
+}
+
+/* Success Output */
+
+document.getElementById("result").innerHTML = `
+
+<div class="card">
+
+<h3>🤖 Narima Analysis</h3>
+
+<p><strong>Achievement:</strong> ${achievement}</p>
+
+<p><strong>Hours Worked:</strong> ${hours}</p>
+
+<p><strong>Challenge:</strong> ${challenge}</p>
+
+<p><strong>Lesson Learned:</strong> ${lesson}</p>
+
+<p><strong>Next Action:</strong> ${nextGoal}</p>
+
+<p><strong>Progress Added:</strong> +${progressIncrease}%</p>
+
+<p><strong>Average Goal Progress:</strong> ${averageProgress}%</p>
+
+<br>
+
+<p>${aiAdvice}</p>
+
+<br>
+
+<p>
+✅ Dashboard updated successfully.
+</p>
+
+<br>
+
+<a href="dashboard.html">
+Return to Dashboard →
+</a>
+
+</div>
+
+`;
+
+document.getElementById("checkinForm").reset();
+
+}
+
+</script>
+
+</body>
+</html>

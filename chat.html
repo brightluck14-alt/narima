@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Narima AI</title>
+
+<link rel="icon" href="favicon.png">
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <div class="chat-header">
+
+        <h1>🚀 Narima AI</h1>
+
+        <p class="tagline">
+            From Ideas to Action
+        </p>
+
+        <p class="company">
+            A Product of Bright Mfoniso Technologies
+        </p>
+
+    </div>
+
+    <div class="dashboard-links">
+
+        <a href="dashboard.html" class="hero-btn">
+            📊 Open Dashboard
+        </a>
+
+    </div>
+
+    <div id="chat-box">
+
+        <div class="ai-message">
+
+            👋 Welcome to Narima.
+
+            What goal would you like to achieve?
+
+        </div>
+
+    </div>
+
+    <div class="input-area">
+
+        <input
+        type="text"
+        id="user-input"
+        placeholder="Type your answer...">
+
+        <button onclick="sendMessage()">
+            Send
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+let step = 0;
+let goalData = {};
+
+function sendMessage(){
+
+const input =
+document.getElementById("user-input");
+
+const chatBox =
+document.getElementById("chat-box");
+
+if(!input || !chatBox){
+console.error("Chat elements missing");
+return;
+}
+
+let message =
+input.value.trim();
+
+if(message === ""){
+return;
+}
+
+chatBox.innerHTML += `
+<div class="user-message">
+${message}
+</div>
+`;
+
+input.value = "";
+
+let reply = "";
+
+/* STEP 1 */
+
+if(step === 0){
+
+goalData.goal = message;
+
+reply =
+"💡 Why is achieving this goal important to you personally?";
+
+step = 1;
+
+}
+
+/* STEP 2 */
+
+else if(step === 1){
+
+goalData.reason = message;
+
+reply =
+"🏆 If you achieve this goal, what will change in your life?";
+
+step = 2;
+
+}
+
+/* STEP 3 */
+
+else if(step === 2){
+
+goalData.reward = message;
+
+reply =
+"📅 When would you like to achieve this goal?";
+
+step = 3;
+
+}
+
+/* STEP 4 */
+
+else if(step === 3){
+
+goalData.deadline = message;
+
+reply =
+"⏰ How many hours per week can you dedicate to this goal?";
+
+step = 4;
+
+}
+
+/* STEP 5 */
+
+else if(step === 4){
+
+goalData.hours = message;
+
+reply =
+"⚠️ What is the biggest obstacle that could stop you?";
+
+step = 5;
+
+}
+
+/* STEP 6 */
+
+else if(step === 5){
+
+goalData.obstacle = message;
+
+reply =
+"🔥 On a scale of 1-10, how committed are you to achieving this goal?";
+
+step = 6;
+
+}
+
+/* FINAL STEP */
+
+else if(step === 6){
+
+goalData.commitment = message;
+
+let goal =
+goalData.goal.toLowerCase();
+
+let roadmap = "";
+
+/* ROADMAPS */
+
+if(
+goal.includes("coding") ||
+goal.includes("developer") ||
+goal.includes("programming")
+){
+
+roadmap = `
+🚀 CODING ROADMAP
+
+Month 1: HTML & CSS
+
+Month 2: JavaScript
+
+Month 3: Build Projects
+
+Month 4: Git & GitHub
+
+Month 5: React
+
+Month 6: Portfolio Development
+`;
+
+}
+
+else if(
+goal.includes("business") ||
+goal.includes("startup")
+){
+
+roadmap = `
+💼 BUSINESS ROADMAP
+
+Week 1: Market Research
+
+Week 2: Customer Discovery
+
+Week 3: MVP Creation
+
+Week 4: Launch
+
+Week 5: Collect Feedback
+
+Week 6: Improve & Scale
+`;
+
+}
+
+else if(
+goal.includes("fitness") ||
+goal.includes("gym") ||
+goal.includes("weight")
+){
+
+roadmap = `
+💪 FITNESS ROADMAP
+
+Week 1: Build Routine
+
+Week 2: Improve Nutrition
+
+Week 3: Track Workouts
+
+Week 4: Increase Intensity
+
+Week 5: Review Progress
+
+Week 6: Optimize Results
+`;
+
+}
+
+else if(
+goal.includes("english")
+){
+
+roadmap = `
+📚 ENGLISH ROADMAP
+
+Week 1: Vocabulary
+
+Week 2: Grammar
+
+Week 3: Listening
+
+Week 4: Speaking
+
+Week 5: Reading
+
+Week 6: Daily Conversations
+`;
+
+}
+
+else{
+
+roadmap = `
+🎯 SUCCESS ROADMAP
+
+Step 1: Define Goal
+
+Step 2: Break Into Tasks
+
+Step 3: Daily Action
+
+Step 4: Weekly Review
+
+Step 5: Improve & Repeat
+`;
+
+}
+
+/* DIFFICULTY */
+
+let difficulty = "Medium";
+
+if(Number(goalData.hours) >= 15){
+difficulty = "High";
+}
+else if(Number(goalData.hours) <= 5){
+difficulty = "Low";
+}
+
+/* SAVE GOAL */
+
+let goals =
+JSON.parse(
+localStorage.getItem("narimaGoals")
+) || [];
+
+goals.push({
+
+goal: goalData.goal,
+
+reason: goalData.reason,
+
+reward: goalData.reward,
+
+deadline: goalData.deadline,
+
+hours: goalData.hours,
+
+obstacle: goalData.obstacle,
+
+commitment: goalData.commitment,
+
+difficulty: difficulty,
+
+progress: 0,
+
+created:
+new Date().toLocaleDateString()
+
+});
+
+localStorage.setItem(
+"narimaGoals",
+JSON.stringify(goals)
+);
+
+reply = `
+
+${roadmap}
+
+✅ GOAL SAVED SUCCESSFULLY
+
+🎯 Goal:
+${goalData.goal}
+
+💡 Why It Matters:
+${goalData.reason}
+
+🏆 Expected Result:
+${goalData.reward}
+
+⚠️ Biggest Obstacle:
+${goalData.obstacle}
+
+🔥 Commitment Score:
+${goalData.commitment}/10
+
+📊 Difficulty:
+${difficulty}
+
+🧠 Narima Advice:
+
+Success comes from consistency, not motivation.
+
+Complete your Weekly Reviews regularly and keep moving forward.
+
+Your dashboard is ready to track your progress.
+`;
+
+step = 0;
+goalData = {};
+
+}
+
+setTimeout(() => {
+
+chatBox.innerHTML += `
+<div class="ai-message">
+${reply}
+</div>
+`;
+
+chatBox.scrollTop =
+chatBox.scrollHeight;
+
+}, 500);
+
+}
+
+/* SAFE ENTER KEY */
+
+const userInput =
+document.getElementById("user-input");
+
+if(userInput){
+
+userInput.addEventListener("keypress", function(e){
+
+if(e.key === "Enter"){
+sendMessage();
+}
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
