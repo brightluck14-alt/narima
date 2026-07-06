@@ -63,16 +63,7 @@ Be supportive, insightful, and action-oriented.
 
     const data = await response.json();
 
-    return res.status(200).json({
-      reply:
-        data.choices?.[0]?.message?.content ||
-        "No response received."
-    });
-
-  } catch (error) {
-
-    return res.status(500).json({
-      error: error.message
+return res.status(200).json(data);
     });
 
   }
