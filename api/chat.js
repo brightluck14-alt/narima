@@ -50,13 +50,23 @@ Always provide practical advice, clear steps, and encouragement.
 
     const data = await response.json();
 
-console.log("OPENROUTER RESPONSE:");
-console.log(JSON.stringify(data, null, 2));
+    console.log("OPENROUTER RESPONSE:");
+    console.log(JSON.stringify(data, null, 2));
 
-return res.status(200).json({
-  reply:
-    data?.choices?.[0]?.message?.content ||
-    JSON.stringify(data)
-});
-    }
-}
+    return res.status(200).json({
+      reply:
+        data?.choices?.[0]?.message?.content ||
+        JSON.stringify(data)
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      error: error.message
+    });
+
+  }
+
+};
