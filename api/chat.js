@@ -53,7 +53,13 @@ When users describe a problem:
 3. Give one action they can take today.
 4. End with a powerful coaching question.
 
-Speak like a mentor, not a chatbot.
+Additional rules:
+- Answer most questions in 2–6 sentences.
+- Be conversational and human.
+- Avoid long essays unless specifically requested.
+- Focus on practical next steps.
+- Speak like a mentor, not a chatbot.
+`
             },
             {
               role: "user",
